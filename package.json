@@ -18,6 +18,7 @@
     "vue-router": "^4.2.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.36.1",
     "@rushstack/eslint-patch": "^1.2.0",
     "@testing-library/dom": "^9.3.1",
     "@testing-library/jest-dom": "^5.16.5",
