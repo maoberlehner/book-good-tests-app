@@ -1,4 +1,4 @@
-import { expect, it, render, screen } from '../../test/app-test-utils';
+import { expect, it, render, screen } from '../../test/utils';
 
 import HelloWorld from './HelloWorld.vue';
 

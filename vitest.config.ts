@@ -5,6 +5,11 @@ import viteConfig from './vite.config';
 
 export default defineConfig({
   ...viteConfig,
+  resolve: {
+    alias: {
+      '@application-test-utils': './test/drivers/vitest/driver.ts',
+    },
+  },
   test: {
     clearMocks: true,
     css: true,
