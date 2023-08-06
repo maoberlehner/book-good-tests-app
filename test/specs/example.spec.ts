@@ -1,7 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { it } from '@application-test-utils';
 
-test('works', async ({ page }) => {
-  await page.goto('/');
-
-  await expect(page.getByText('You did it!')).toBeVisible();
+it('should motivate us', async ({ driver }) => {
+  await driver.goTo('/');
+  await driver.findByText('We did it!').shouldBeVisible();
 });
