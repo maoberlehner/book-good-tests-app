@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 defineProps<{
   msg: string;
 }>();
+
+const todo = ref(null);
+fetch('https://jsonplaceholder.typicode.com/todos/1')
+  .then((response) => response.json())
+  .then((value) => (todo.value = value));
 </script>
 
 <template>
@@ -13,6 +20,7 @@ defineProps<{
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
       What's next?
     </h3>
+    <h3 v-if="todo">{{ todo.title }}</h3>
   </div>
 </template>
 
