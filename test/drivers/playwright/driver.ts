@@ -70,6 +70,22 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
   findAllByText(text) {
     return makeAssertions(() => page.getByText(text));
   },
+  mockEndpoint(path, { body, method = 'get', status = 200 }) {
+    page.route(path, (route) => {
+      if (route.request().method() !== method.toUpperCase()) {
+        route.continue();
+        return;
+      }
+
+      route.fulfill({
+        status,
+        body: JSON.stringify(body),
+      });
+    });
+  },
+  setUp(factory) {
+    return factory({ driver: this });
+  },
   queryByText(text) {
     return makeAssertionsNot(() => page.getByText(text));
   },

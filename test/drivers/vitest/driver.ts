@@ -11,6 +11,7 @@ import type {
 } from '../../driver';
 import { mount } from '../../../src/mount';
 import { makeRouter } from '../../../src/router';
+import { mockEndpoint } from '../../utils';
 
 type ElementResolver = () => Promise<HTMLElement | HTMLElement[]>;
 
@@ -135,6 +136,10 @@ const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
   },
   findAllByText(text) {
     return makeAssertions(() => screen.findAllByText(text));
+  },
+  mockEndpoint,
+  setUp(factory) {
+    return factory({ driver: this });
   },
   queryByText(text) {
     return makeAssertionsNot(async () => screen.queryByText(text));

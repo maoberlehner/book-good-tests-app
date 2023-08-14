@@ -43,11 +43,32 @@ type GoToOptions = {
 
 type GoTo = (path: string, options?: GoToOptions) => Promise<void>;
 
+type MockEndpointOptions = {
+  body: string | [unknown] | Record<string | number, unknown>;
+  method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
+  status?: number;
+};
+
+type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
+
+export type SetupFactoryOptions = {
+  context: Context;
+  driver: Driver;
+};
+
+type SetupFactory = ({ context, driver }: SetupFactoryOptions) => any;
+
+type SetUp = <Factory extends SetupFactory>(
+  factory: Factory,
+) => Promise<ReturnType<Factory>>;
+
 export type Driver = {
   findAllByText: FindAllByText;
   findByLabelText: FindByLabelText;
   findByRole: FindByRole;
   findByText: FindByText;
   goTo: GoTo;
+  mockEndpoint: MockEndpoint;
+  setUp: SetUp;
   queryByText: QueryByText;
 };
