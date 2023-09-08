@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import TheWelcome from '../TheWelcome.vue';
+import BaseHeadline from '../BaseHeadline.vue';
+import ShoppingList from '../ShoppingList.vue';
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <div class="space-y-4">
+    <BaseHeadline level="1">Shopping list</BaseHeadline>
+    <ShoppingList />
+  </div>
 </template>
