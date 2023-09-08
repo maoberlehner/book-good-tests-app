@@ -1,4 +1,4 @@
-import './assets/main.css';
+import './assets/style.css';
 
 import { makeRouter } from './router';
 import { mount } from './mount';
