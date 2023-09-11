@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseInput from './BaseInput.vue';
 import BaseHeadline from './BaseHeadline.vue';
+import ShoppingListList from './ShoppingListList.vue';
 
 let items = ref([]);
 let itemNewTitle = ref(``);
@@ -11,19 +12,14 @@ let itemNewTitle = ref(``);
 let addItem = async () => {
   items.value.push({ title: itemNewTitle.value });
 };
+let removeItem = async (id: number) => {
+  items.value = items.value.filter((item) => item.id !== id);
+};
 </script>
 
 <template>
   <div class="space-y-6">
-    <ul class="space-y-2">
-      <li v-for="item in items" :key="item.id">
-        <div
-          class="rounded px-4 py-3 bg-teal-600 text-white text-left w-full transition-colors"
-        >
-          {{ item.title }}
-        </div>
-      </li>
-    </ul>
+    <ShoppingListList :items="items" @removeItem="removeItem" />
 
     <div>
       <BaseHeadline level="2">Add new item</BaseHeadline>
