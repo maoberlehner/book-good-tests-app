@@ -51,6 +51,10 @@ type MockEndpointOptions = {
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
+type Context = {
+  localStorage: Storage;
+};
+
 export type SetupFactoryOptions = {
   context: Context;
   driver: Driver;

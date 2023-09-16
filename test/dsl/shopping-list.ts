@@ -1,6 +1,11 @@
-import { Driver } from '../driver';
+import { SetupFactoryOptions } from '../driver';
+import { makeDb } from '../../server/db.mjs';
+import { makeItemRepository } from '../../server/repositories/item.mjs';
 
-export const shoppingListFactory = (driver: Driver) => ({
+const db = makeDb();
+const itemRepository = makeItemRepository({ db });
+
+export const shoppingListDSLFactory = ({ driver }: SetupFactoryOptions) => ({
   open: async () => {
     await driver.goTo('/');
   },
@@ -10,6 +15,11 @@ export const shoppingListFactory = (driver: Driver) => ({
   },
   removeItem: async (title: string) => {
     await driver.findByRole('button', { name: title }).click();
+  },
+  hasItems: async (items: { userId: string; title: string }[]) => {
+    for (const item of items) {
+      await itemRepository.create(item);
+    }
   },
   expectItemOnList: async (item: string) => {
     await driver.findByText(item).shouldBeVisible();

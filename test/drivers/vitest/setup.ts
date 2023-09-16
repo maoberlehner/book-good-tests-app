@@ -4,7 +4,7 @@ import { mockServer } from '../../mock-server';
 
 expect.extend(matchers);
 
-beforeAll(() => mockServer.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => mockServer.listen({ onUnhandledRequest: 'bypass' }));
 afterAll(() => mockServer.close());
 afterEach(() => {
   mockServer.resetHandlers();

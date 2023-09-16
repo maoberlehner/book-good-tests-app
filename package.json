@@ -17,6 +17,10 @@
     "test:application:playwright": "npx playwright test"
   },
   "dependencies": {
+    "@fastify/jwt": "^7.2.1",
+    "@fastify/static": "^6.11.1",
+    "better-sqlite3": "^8.6.0",
+    "fastify": "^4.23.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2"
   },
