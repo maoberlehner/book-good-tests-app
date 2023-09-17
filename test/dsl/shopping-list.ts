@@ -1,25 +1,28 @@
 import { SetupFactoryOptions } from '../driver';
-import { makeDb } from '../../server/db.mjs';
-import { makeItemRepository } from '../../server/repositories/item.mjs';
-
-const db = makeDb();
-const itemRepository = makeItemRepository({ db });
 
 export const shoppingListDSLFactory = ({ driver }: SetupFactoryOptions) => ({
   open: async () => {
     await driver.goTo('/');
   },
   addItem: async (title: string) => {
+    await driver.mockEndpoint('http://localhost:5173/api/items', {
+      method: 'post',
+      body: { id: '123', userId: '123', title },
+    });
     await driver.findByLabelText('Title').type(title);
     await driver.findByRole('button', { name: 'Add item' }).click();
   },
   removeItem: async (title: string) => {
+    await driver.mockEndpoint('http://localhost:5173/api/items/*', {
+      method: 'delete',
+      body: { success: true },
+    });
     await driver.findByRole('button', { name: title }).click();
   },
-  hasItems: async (items: { userId: string; title: string }[]) => {
-    for (const item of items) {
-      await itemRepository.create(item);
-    }
+  hasItems: async (items: { id: string; userId: string; title: string }[]) => {
+    await driver.mockEndpoint('http://localhost:5173/api/items', {
+      body: items,
+    });
   },
   expectItemOnList: async (item: string) => {
     await driver.findByText(item).shouldBeVisible();
