@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import BaseHeadline from '../BaseHeadline.vue';
-import ShoppingList from '../ShoppingList.vue';
 
 const isLoggedIn = Boolean(localStorage.getItem('token'));
 </script>
@@ -8,7 +7,7 @@ const isLoggedIn = Boolean(localStorage.getItem('token'));
 <template>
   <div v-if="isLoggedIn" class="space-y-4">
     <BaseHeadline level="1">Shopping list</BaseHeadline>
-    <ShoppingList />
+    <p>TODO</p>
   </div>
   <div v-else>
     <RouterLink to="/login">Log in</RouterLink>
