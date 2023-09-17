@@ -1,17 +1,22 @@
+type ActionCallback = () => void | Promise<void>;
+
 export type Assertions = {
-  shouldBeVisible: () => Promise<void>;
-  shouldHaveAttribute: (name: string, value?: string | RegExp) => Promise<void>;
+  shouldBeVisible: () => ActionCallback;
+  shouldHaveAttribute: (
+    name: string,
+    value?: string | RegExp,
+  ) => ActionCallback;
 };
 
 export type AssertionsNot = {
-  shouldNotBeVisible: () => Promise<void>;
-  shouldNotExist: () => Promise<void>;
+  shouldNotBeVisible: () => ActionCallback;
+  shouldNotExist: () => ActionCallback;
 };
 
 export type Interactions = {
-  check: () => Promise<void>;
-  click: () => Promise<void>;
-  type: (text: string) => Promise<void>;
+  check: () => ActionCallback;
+  click: () => ActionCallback;
+  type: (text: string) => ActionCallback;
 };
 
 type FindByLabelText = (text: string) => Interactions & Assertions;
@@ -41,30 +46,27 @@ type GoToOptions = {
   device?: 'desktop' | 'mobile';
 };
 
-type GoTo = (path: string, options?: GoToOptions) => Promise<void>;
+type GoTo = (path: string, options?: GoToOptions) => ActionCallback;
 
 type MockEndpointOptions = {
-  body: string | [unknown] | Record<string | number, unknown>;
+  body: string | unknown[] | Record<string | number, unknown>;
   method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
   status?: number;
 };
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
-type Context = {
-  localStorage: Storage;
-};
-
-export type SetupFactoryOptions = {
-  context: Context;
+type FactoryOptions = {
+  context: { localStorage: Storage };
   driver: Driver;
 };
 
-type SetupFactory = ({ context, driver }: SetupFactoryOptions) => any;
+type Factory = (
+  options: FactoryOptions,
+) => void | Promise<void> | ActionCallback | ActionCallback[];
 
-type SetUp = <Factory extends SetupFactory>(
-  factory: Factory,
-) => Promise<ReturnType<Factory>>;
+export type StepWithOptions<Options> = (options: Options) => Factory;
+export type Step = () => Factory;
 
 export type Driver = {
   findAllByText: FindAllByText;
@@ -73,6 +75,5 @@ export type Driver = {
   findByText: FindByText;
   goTo: GoTo;
   mockEndpoint: MockEndpoint;
-  setUp: SetUp;
   queryByText: QueryByText;
 };

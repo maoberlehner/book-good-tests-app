@@ -8,6 +8,7 @@ import type {
   AssertionsNot,
   Driver,
   Interactions,
+  Step,
 } from '../../driver';
 import { mount } from '../../../src/mount';
 import { makeRouter } from '../../../src/router';
@@ -21,10 +22,10 @@ function toArray<Type>(maybeArray: Type | Type[]) {
 
 function makeAssertions(elementResolver: ElementResolver): Assertions {
   return {
-    shouldBeVisible: async () => {
+    shouldBeVisible: () => async () => {
       expect(await elementResolver()).toBeVisible();
     },
-    shouldHaveAttribute: async (attribute, value) => {
+    shouldHaveAttribute: (attribute, value) => async () => {
       const elements = toArray<HTMLElement>(await elementResolver());
 
       // eslint-disable-next-line no-restricted-syntax
@@ -43,10 +44,10 @@ function makeAssertionsNot(
   elementResolver: () => Promise<HTMLElement | null>,
 ): AssertionsNot {
   return {
-    shouldNotBeVisible: async () => {
+    shouldNotBeVisible: () => async () => {
       expect(await elementResolver()).toBeFalsy();
     },
-    shouldNotExist: async () => {
+    shouldNotExist: () => async () => {
       const element = await elementResolver();
       if (element) {
         try {
@@ -64,7 +65,7 @@ function makeInteractions(
   { user }: { user: UserEvent },
 ): Interactions {
   return {
-    check: async () => {
+    check: () => async () => {
       const elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (const element of elements) {
@@ -72,7 +73,7 @@ function makeInteractions(
         await user.click(element);
       }
     },
-    click: async () => {
+    click: () => async () => {
       const elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (const element of elements) {
@@ -80,7 +81,7 @@ function makeInteractions(
         await user.click(element);
       }
     },
-    type: async (text) => {
+    type: (text) => async () => {
       const elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (const element of elements) {
@@ -101,25 +102,27 @@ function makeAssertionsInteractions(
   };
 }
 
-const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
+const makeDriver = ({ context, user }: { user: UserEvent }): Driver => ({
   async goTo(path) {
-    const router = makeRouter();
-    try {
-      await router.push(path);
-    } catch (error) {
-      // Ignore redirection error.
-      if (
-        error instanceof Error &&
-        error.message.includes('Redirected when going from')
-      ) {
-        return;
+    return async () => {
+      const router = makeRouter();
+      try {
+        await router.push(path);
+      } catch (error) {
+        // Ignore redirection error.
+        if (
+          error instanceof Error &&
+          error.message.includes('Redirected when going from')
+        ) {
+          return;
+        }
+
+        throw error;
       }
 
-      throw error;
-    }
-
-    document.body.innerHTML = '<div id="app"></div>';
-    mount({ router });
+      document.body.innerHTML = '<div id="app"></div>';
+      mount({ router });
+    };
   },
   findByLabelText(text) {
     return makeAssertionsInteractions(() => screen.findByLabelText(text), {
@@ -137,25 +140,52 @@ const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
   findAllByText(text) {
     return makeAssertions(() => screen.findAllByText(text));
   },
-  mockEndpoint,
-  setUp(factory) {
-    return factory({ context: { localStorage }, driver: this });
-  },
+  mockEndpoint: (path, options) => () => mockEndpoint(`${path}*`, options),
   queryByText(text) {
     return makeAssertionsNot(async () => screen.queryByText(text));
   },
 });
 
-const it = itVitest.extend<{ driver: Driver }>({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  driver: async ({ task }, use) => {
-    const context: {
-      user: UserEvent;
-    } = {
-      user: userEvent.setup(),
-    };
-    await use(makeDriver(context));
-  },
-});
+async function runSteps({
+  context,
+  driver,
+  steps,
+}: {
+  driver: Driver;
+  steps: Step[];
+}) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const step of steps) {
+    // eslint-disable-next-line no-await-in-loop
+    const nestedCallback = await step({ context, driver });
+    // Step definitions return another callback.
+    // eslint-disable-next-line no-await-in-loop
+    if (typeof nestedCallback === `function`) await nestedCallback();
+    // eslint-disable-next-line no-await-in-loop
+    if (Array.isArray(nestedCallback))
+      await runSteps({ context, driver, steps: nestedCallback });
+  }
+}
 
+type ItCallback = ({
+  driver,
+  context,
+}: {
+  driver: Driver;
+  context: { localStorage: Storage };
+}) => Step[];
+
+function wrapItCallback(func: ItCallback) {
+  return async () => {
+    const context = { localStorage };
+    const driver = makeDriver({ context, user: userEvent.setup() });
+    const steps = func({ context, driver });
+
+    await runSteps({ context, driver, steps });
+  };
+}
+const it = (description: string, func: ItCallback) =>
+  itVitest(description, wrapItCallback(func));
+it.only = (description: string, func: ItCallback) =>
+  itVitest.only(description, wrapItCallback(func));
 export { it };

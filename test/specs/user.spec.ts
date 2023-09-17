@@ -1,13 +1,10 @@
 import { it } from '@application-test-utils';
 
-import { userDSLFactory } from '../dsl/user';
-import { shoppingListDSLFactory } from '../dsl/shopping-list';
+import * as shoppingListDSL from '../dsl/shopping-list';
+import * as userDSL from '../dsl/user';
 
-it('should be possible to login', async ({ driver }) => {
-  const user = await driver.setUp(userDSLFactory);
-  const shoppingList = await driver.setUp(shoppingListDSLFactory);
-
-  await shoppingList.hasItems([]);
-  await user.logIn({ name: 'admin', password: 'password' });
-  await user.expectLoggedIn();
-});
+it('should be possible to login', () => [
+  shoppingListDSL.hasItems({ items: [] }),
+  userDSL.logIn({ name: 'admin', password: 'password' }),
+  userDSL.expectLoggedIn(),
+]);
