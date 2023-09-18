@@ -13,7 +13,8 @@
     "test:component": "vitest run ./src",
     "test:coverage": "vitest run --coverage",
     "test:application:vitest": "npx vitest run ./test/specs",
-    "test:application": "npm run test:application:vitest",
+    "test:application:cypress": "npx cypress run",
+    "test:application": "npm run test:application:cypress",
     "test:application:playwright": "npx playwright test"
   },
   "dependencies": {
