@@ -14,5 +14,5 @@ it('should emit a remove event when clicking an item', async () => {
 
   await userEvent.click(await screen.findByRole('button', { name: 'Item 1' }));
 
-  expect(emitted()['remove-item'][0][0]).toEqual(1);
+  expect(emitted()['removeItem'][0][0]).toEqual(1);
 });

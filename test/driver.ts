@@ -60,7 +60,7 @@ export type SetupFactoryOptions = {
   driver: Driver;
 };
 
-type SetupFactory = ({ context, driver }: SetupFactoryOptions) => any;
+type SetupFactory = (factory: Driver) => any;
 
 type SetUp = <Factory extends SetupFactory>(
   factory: Factory,

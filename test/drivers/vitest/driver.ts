@@ -139,7 +139,7 @@ const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
   },
   mockEndpoint,
   setUp(factory) {
-    return factory({ driver: this });
+    return factory(this);
   },
   queryByText(text) {
     return makeAssertionsNot(async () => screen.queryByText(text));
