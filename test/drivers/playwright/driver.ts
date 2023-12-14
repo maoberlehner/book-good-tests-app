@@ -84,7 +84,7 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
     });
   },
   setUp(factory) {
-    return factory({ driver: this });
+    return factory(this);
   },
   queryByText(text) {
     return makeAssertionsNot(() => page.getByText(text));

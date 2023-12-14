@@ -1,4 +1,4 @@
-import { Driver } from '../driver';
+import type { Driver } from '../driver';
 
 export const shoppingListFactory = (driver: Driver) => ({
   open: async () => {
