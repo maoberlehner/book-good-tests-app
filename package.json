@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "test:component": "vitest run ./src",
-    "test:component:coverage": "vitest run --coverage"
+    "test:component:coverage": "vitest run --coverage",
+    "test:application:playwright": "npx playwright test"
   },
   "dependencies": {
     "vue": "^3.4.21"

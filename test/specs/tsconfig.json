@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@application-test-utils": ["../drivers/playwright/driver.ts"]
+    }
+  }
+}
