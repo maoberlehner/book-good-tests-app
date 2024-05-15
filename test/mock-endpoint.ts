@@ -1,19 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import type { SetupWorker } from 'msw/browser';
 import type { SetupServerApi } from 'msw/node';
-
-type MockEndpoint = (
-  endpoint: string,
-  {
-    body,
-    method,
-    status,
-  }: {
-    body: any;
-    method?: 'get' | 'post' | 'put' | 'delete' | 'patch';
-    status?: number;
-  },
-) => void;
+import type { MockEndpoint } from './driver';
 
 export const makeMockEndpoint =
   ({
