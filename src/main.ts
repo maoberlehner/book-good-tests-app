@@ -1,6 +1,6 @@
 import './assets/main.css';
 
-import { createApp } from 'vue';
-import App from './App.vue';
+import { makeRouter } from './router';
+import { mount } from './mount';
 
-createApp(App).mount('#app');
+mount({ router: makeRouter() });

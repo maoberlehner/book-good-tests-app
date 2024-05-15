@@ -13,7 +13,9 @@
     "format": "prettier --write src/",
     "test:component": "vitest run ./src",
     "test:component:coverage": "vitest run --coverage",
-    "test:application:playwright": "npx playwright test"
+    "test:application:playwright": "npx playwright test",
+    "test:application:vitest": "npx vitest run ./test/specs",
+    "test:application": "npm run test:application:vitest"
   },
   "dependencies": {
     "vue": "^3.4.21"
@@ -42,6 +44,7 @@
     "vite": "^5.2.8",
     "vite-plugin-vue-devtools": "^7.0.25",
     "vitest": "^1.6.0",
+    "vue-router": "^4.3.2",
     "vue-tsc": "^2.0.11"
   }
 }

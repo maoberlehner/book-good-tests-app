@@ -6,6 +6,17 @@ import viteConfig from './vite.config';
 export default mergeConfig(
   viteConfig,
   defineConfig({
+    resolve: {
+      alias: [
+        {
+          find: '@application-test-utils',
+          replacement: path.resolve(
+            __dirname,
+            './test/drivers/vitest/driver.ts',
+          ),
+        },
+      ],
+    },
     test: {
       clearMocks: true,
       css: true,
