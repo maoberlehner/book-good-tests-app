@@ -46,5 +46,10 @@
     "vitest": "^1.6.0",
     "vue-router": "^4.3.2",
     "vue-tsc": "^2.0.11"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
