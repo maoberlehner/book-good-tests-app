@@ -52,12 +52,14 @@ type MockEndpointOptions = {
 export type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
 export type Precondition = ({
+  localStorage,
   mockEndpoint,
 }: {
+  localStorage: Storage;
   mockEndpoint: MockEndpoint;
 }) => void;
 
-export type Prepare = (precondition: Precondition) => void;
+export type Prepare = (precondition: Precondition) => Promise<void>;
 
 export type Driver = {
   findAllByText: FindAllByText;

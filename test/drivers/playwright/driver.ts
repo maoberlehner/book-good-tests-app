@@ -60,42 +60,77 @@ function makeAssertionsInteractions(
   };
 }
 
-const makeDriver = ({ page }: { page: Page }): Driver => ({
-  async goTo(path) {
-    await page.goto(path);
+const makeLocalStorageFake = () => ({
+  clear() {
+    this.data = {};
   },
-  findByLabelText(text) {
-    return makeAssertionsInteractions(() => page.getByLabel(text));
+  data: {} as Record<string, string>,
+  getItem(key: string) {
+    return this.data[key];
   },
-  findByRole(role, { name }) {
-    return makeAssertionsInteractions(() => page.getByRole(role, { name }));
+  key(index: number) {
+    const keys = Object.keys(this.data);
+    return keys[index] || null;
   },
-  findByText(text) {
-    return makeAssertions(() => page.getByText(text));
+  get length() {
+    return Object.keys(this.data).length;
   },
-  findAllByText(text) {
-    return makeAssertions(() => page.getByText(text));
+  removeItem(key: string) {
+    delete this.data[key];
   },
-  mockEndpoint(path, { body, method = 'get', status = 200 }) {
-    page.route(path, (route) => {
-      if (route.request().method() !== method.toUpperCase()) {
-        route.continue();
-        return;
-      }
-
-      route.fulfill({
-        status,
-        body: JSON.stringify(body),
-      });
-    });
-  },
-  prepare(precondition) {
-    precondition({ mockEndpoint: this.mockEndpoint });
-  },
-  queryByText(text) {
-    return makeAssertionsNot(() => page.getByText(text));
+  setItem(key: string, value: string) {
+    this.data[key] = value;
   },
 });
+
+const makeDriver = ({ page }: { page: Page }): Driver => {
+  const localStorageFake = makeLocalStorageFake();
+  return {
+    async goTo(path) {
+      await page.addInitScript((state) => {
+        for (const [key, value] of Object.entries(state)) {
+          window.localStorage.setItem(key, value as string);
+        }
+      }, localStorageFake.data);
+
+      await page.goto(path);
+    },
+    findByLabelText(text) {
+      return makeAssertionsInteractions(() => page.getByLabel(text));
+    },
+    findByRole(role, { name }) {
+      return makeAssertionsInteractions(() => page.getByRole(role, { name }));
+    },
+    findByText(text) {
+      return makeAssertions(() => page.getByText(text));
+    },
+    findAllByText(text) {
+      return makeAssertions(() => page.getByText(text));
+    },
+    mockEndpoint(path, { body, method = 'get', status = 200 }) {
+      page.route(path, (route) => {
+        if (route.request().method() !== method.toUpperCase()) {
+          route.continue();
+          return;
+        }
+
+        route.fulfill({
+          status,
+          body: JSON.stringify(body),
+        });
+      });
+    },
+    async prepare(precondition) {
+      await precondition({
+        localStorage: localStorageFake,
+        mockEndpoint: this.mockEndpoint,
+      });
+    },
+    queryByText(text) {
+      return makeAssertionsNot(() => page.getByText(text));
+    },
+  };
+};
 
 function wrapItCallback(func: ItCallback) {
   return ({ page }: { page: Page }) => {

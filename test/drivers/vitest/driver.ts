@@ -131,8 +131,11 @@ const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
     return makeAssertions(() => screen.findAllByText(text));
   },
   mockEndpoint,
-  prepare(precondition) {
-    precondition({ mockEndpoint: this.mockEndpoint });
+  async prepare(precondition) {
+    await precondition({
+      localStorage,
+      mockEndpoint: this.mockEndpoint,
+    });
   },
   queryByText(text) {
     return makeAssertionsNot(async () => screen.queryByText(text));
