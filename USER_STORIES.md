@@ -2,7 +2,7 @@
 
 > As a Grocery Shopper
 > I want to keep a list of groceries I need
-> so that I have them ready on my next shopping trip.
+> so that I have them ready for my next shopping trip.
 
 ## Acceptance Criteria:
 
