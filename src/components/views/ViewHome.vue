@@ -1,3 +1,7 @@
+<script setup>
+import ShoppingList from '../ShoppingList.vue';
+</script>
+
 <template>
-  <h1>Home</h1>
+  <ShoppingList />
 </template>

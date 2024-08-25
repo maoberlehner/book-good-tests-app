@@ -8,6 +8,7 @@
 
 - It should be possible to add items to the list.
 - It should be possible to remove items.
+- It should be possible to edit items.
 
 ## Additional Information:
 
